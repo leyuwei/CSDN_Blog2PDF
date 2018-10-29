@@ -7,6 +7,7 @@ import os,time
 import urllib
 import string
 import shutil
+import re
 import base64
 from bs4 import BeautifulSoup
 import random
@@ -74,17 +75,29 @@ class csdnToPdf:
 		soup = BeautifulSoup(html, features='html5lib')
 		userSoup = soup.find(name="div", attrs={"class":"blog-content-box"})
 		classes=userSoup.findAll(name="pre")    # 处理代码背景色 1/2
-		try:
-			for cla in classes:
+		for cla in classes:
+			try:
 				cla['style'] = "background-color:#DDD"
-		except KeyError:
-			pass
+			except KeyError:
+				pass
 		classes = userSoup.findAll(name="code")  # 处理代码背景色 2/2
-		try:
-			for cla in classes:
+		for cla in classes:
+			try:
 				cla['style'] = "background-color:#DDD"
-		except KeyError:
-			pass
+			except KeyError:
+				pass
+		classes = userSoup.findAll(name="p")  # 处理字体大小 1/2
+		for cla in classes:
+			try:
+				cla['style'] = cla['style'] + ";font-size:23px;line-height:155%;"
+			except KeyError:
+				pass
+		classes = userSoup.findAll(name="span")  # 处理字体大小 2/2
+		for cla in classes:
+			try:
+				cla['style'] = cla['style'] + ";font-size:23px;"
+			except KeyError:
+				pass
 		intro=userSoup.findAll(name="div", attrs={"class":"article-bar-top"})   # 处理个人介绍
 		try:
 			for intr in intro:
@@ -96,6 +109,7 @@ class csdnToPdf:
 			del(loginsoup)
 		except:
 			pass
+
 		strr = userSoup.__str__()
 		dest = self.StringPrefix + strr + self.StringSurfix
 		return dest
@@ -170,14 +184,17 @@ class csdnToPdf:
 		imgSoup = soup.findAll(name="img")
 		id = 0
 		for img in imgSoup:
-			id = id + 1
-			self.login(img['src'],isImage=True,imageId=str(self.identifier)+'_'+str(id))
-			img['src'] = "data:image/jpeg;base64," + self.get_image_file_as_base64_data(self.blogDir + self.bName + self.blogImage + str(self.identifier) + '_' + str(id) + '.jpg').decode('UTF-8')
-			try:
-				del(img['width'])
-				del(img['height'])
-			except:
-				pass
+			if not str(img['src']).__contains__('file:'):
+				if str(img['src']).startswith('//'):
+					img['src'] = 'https' + img['src']
+				id = id + 1
+				self.login(img['src'],isImage=True,imageId=str(self.identifier)+'_'+str(id))
+				img['src'] = "data:image/jpeg;base64," + self.get_image_file_as_base64_data(self.blogDir + self.bName + self.blogImage + str(self.identifier) + '_' + str(id) + '.jpg').decode('UTF-8')
+				try:
+					del(img['width'])
+					del(img['height'])
+				except:
+					pass
 		# 处理公式为BASE64
 		self.print("处理公式中......")
 		ind = 0
@@ -249,6 +266,7 @@ class csdnToPdf:
 		s = s.replace('原\n', '')
 		s = s.replace('转\n', '')
 		s = s.replace('\n', '')
+		s = s.replace('*', '').replace(':', '').replace('?', '').replace('/', '').replace('\\', '').replace('\"', '').replace('<', '').replace('>', '').replace('|', '')
 		return s
 
 
