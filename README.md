@@ -1,5 +1,5 @@
 # CSDN_Blog2PDF
-Convert CSDN Blog to PDF, keeping all codes, images and formulas still. 转换CSDN博客到PDF格式，保持代码、图片和公式完全不变.<br>
+Convert CSDN Blog to PDF while keeping all codes, images and formulas as they were. 转换CSDN博客到PDF格式，保持代码、图片和公式完全不变，方便打印留档.<br>
 <br>
 
 ## Update 20181029
