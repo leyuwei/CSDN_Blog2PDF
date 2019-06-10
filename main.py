@@ -54,7 +54,7 @@ def main():
 	positionRight = int(root.winfo_screenwidth() / 2 - windowWidth / 2)
 	positionDown = int(root.winfo_screenheight() / 2 - windowHeight / 2)
 	root.geometry("+{}+{}".format(positionRight, positionDown))
-	root.title('CSDN博客保存工具 20181029')
+	root.title('CSDN博客导出 Build.20190610')
 	root.resizable(width=False, height=False)
 	ft_title = tkFont.Font(family='Fixdsys', size=18, weight=tkFont.NORMAL)
 	ft_hint = tkFont.Font(family='Fixdsys', size=14, weight=tkFont.NORMAL)

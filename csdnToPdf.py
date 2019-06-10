@@ -73,6 +73,8 @@ class csdnToPdf:
 
 	def fixSynaxHighLighter(self, html):
 		soup = BeautifulSoup(html, features='html5lib')
+		if str(soup).find('页面找不到了') > 0:
+			return False
 		userSoup = soup.find(name="div", attrs={"class":"blog-content-box"})
 		classes=userSoup.findAll(name="pre")    # 处理代码背景色 1/2
 		for cla in classes:
@@ -104,9 +106,9 @@ class csdnToPdf:
 				intr.clear()
 		except KeyError:
 			pass
-		loginsoup=userSoup.findAll(name="div", attrs={"class":"hide-article-box text-center"})[0]
+		loginsoup=userSoup.findAll(name="div", attrs={"class":"hide-article-box hide-article-pos text-center"})
 		try:
-			del(loginsoup)
+			del(loginsoup[0])
 		except:
 			pass
 
@@ -133,13 +135,13 @@ class csdnToPdf:
 	def getAllBlogContent(self):
 		state=True
 		self.print("当前博客内容保存地址：" + self.blogDir)
-		pageNum=0
-		listNum=0
-		html=self.login()
+		pageNum = 1
+		listNum = 0
+		html = self.login()
 		self.prepareHTMLEnv(mode=1)
 		while state:
-			soup=BeautifulSoup(html, features='html5lib')
-			articals=soup.findAll(name='div',attrs={'class' : 'article-item-box csdn-tracking-statistics'})
+			soup = BeautifulSoup(html, features='html5lib')
+			articals = soup.findAll(name='div',attrs={'class' : 'article-item-box csdn-tracking-statistics'})
 			for artical in articals:
 				self.identifier = str(int(time.time()))
 				listNum += 1
@@ -151,7 +153,7 @@ class csdnToPdf:
 				artNum = "page_" + artNum
 				self.print('文章编号： ' + artNum)
 				s = self.processArtTitle(title.text)
-				s = 'P%02d_%02d_%s' % (pageNum, listNum, s)
+				s = 'P%02d_%02d_%s' % (pageNum - 1, listNum, s)
 				self.print('文章标题： ' + s)
 				destHtml = self.blogDir + self.blogName + artNum + '.html'
 				destPdf = self.blogDir + self.blogName + artNum + '.pdf'
@@ -161,23 +163,26 @@ class csdnToPdf:
 					continue
 				self.saveBlog(destHtml, destPdf, realNamePdf, realNameHtml, artical_url)
 			##换页转换
-			pagelist= soup.find(name='div',attrs={'id' : 'pageBox'})
-			next=pagelist.findAll('li')
-			state=False
-			for i in next :
-				if i.text.encode('utf-8')==str('下一页') and string.find(i.attrs['class'], 'ui-pager-disabled')==-1:
-					pageNum+=1
-					listNum=0
-					if not self.url.endswith('/'):
-						self.url = self.url + '/'
-					url2 = self.url + pageNum
-					html = self.login(url2)
-					state=True
-					break
+			pageNum = pageNum + 1
+			listNum = 0
+			if not self.url.endswith('/'):
+				self.url = self.url + '/'
+			if self.url.find('article/list') == -1:
+				self.url = self.url + 'article/list/'
+			url2 = self.url + str(pageNum)
+			html = self.login(url2)
+			state = True
+			if str(html).find('空空如也') > -1 and str(html).find('no-data d-flex') > -1:
+				state = False
+				break
+			self.print('已跳转下一页 P%d...' % pageNum)
+		self.print('博客数据导出完成')
 
 
 	def saveBlog(self, destHtml, destPdf, realNamePdf, realNameHtml, artical_url):
 		htmlContent = self.fixSynaxHighLighter(self.login(artical_url, referer=artical_url))
+		if htmlContent == False:    # 针对隐藏页面消失的跳过处理
+			return
 		soup = BeautifulSoup(htmlContent, features='html5lib')
 		self.print("处理图片中......")
 		# 处理图片为BASE64
@@ -223,8 +228,11 @@ class csdnToPdf:
 					self.blogDir + self.bName + "images\\" + 'formula_' + str(self.identifier) + '_' + str(
 						ind) + '.png').decode('UTF-8') + "\"/></span>"
 				l.insert_after(BeautifulSoup(latex_img, features='html5lib'))
-		hidinginfosoup = soup.findAll(name="div", attrs={"class": "hide-article-box text-center"})[0]
-		hidinginfosoup['style'] = 'display: none;'
+		try:
+			hidinginfosoup = soup.findAll(name="div", attrs={"class": "hide-article-box hide-article-pos text-center"})[0]
+			hidinginfosoup['style'] = 'display: none;'
+		except:
+			pass
 		htmlContent = soup.__str__()
 		with open(destHtml, 'w', encoding='utf-8') as f:
 			f.write(htmlContent)
