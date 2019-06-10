@@ -37,5 +37,5 @@ Requiring installation of `shutil`,`bs4`,`pdfkit`and`wkhtmltopdf`.<br>
 <br>
 
 ## Instructions
-环境配置完成后，请直接用Python运行main.py或直接运行批处理run.bat，按照图形界面中的指示进行操作。下载后的博客都在`csdn_blog`文件夹下。<br>
-After installing those dependencies, you may directly running main.py or run.bat. Follow the instructions in the pop-up window. The downloaded PDF & HTML files are all in the `csdn_blog` directory.<br>
+环境配置完成后，请直接用Python运行`main.py`或直接运行批处理`run.bat`，按照图形界面中的指示进行操作。下载后的博客都在`csdn_blog`文件夹下。<br>
+After installing those dependencies, you may run `main.py` or `run.bat`. Please follow the instructions in the pop-up window. The downloaded PDF & HTML files are all saved in the `csdn_blog` directory.<br>
