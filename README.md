@@ -2,12 +2,26 @@
 Convert CSDN Blog to PDF while keeping all codes, images and formulas as they were. 转换CSDN博客到PDF格式，保持代码、图片和公式完全不变，方便打印留档.<br>
 <br>
 
-## Update 20181029
-* New : Update requirements.txt<br>
-* New : Better look in HTML and PDF files<br>
-* Fix : Multiple crash happened when blog is not properly written<br>
-* Fix : File saving error due to prohibited characters in file name<br>
+## Update : 
+
+## Update 20190610
+0610 Updates:
+* Fix : Crash when applying to the latest CSDN website 更新对新版本CSDN网站的适配
+* Fix : Crash when saving some hidden blogs 更新隐藏博文忽略处理
+* Fix : Malfuntion when crawling through multiple pages 修复多页博客的连续爬取故障
+
+Old Updates:
+* New : Update requirements.txt
+* New : Better look in HTML and PDF files
+* Fix : Multiple crash happened when blog is not properly written
+* Fix : File saving error due to prohibited characters in file name
+
 <br>
+
+## Demo
+running build.20190610
+![saved files](etc/demo1.jpg)
+![demo of a saved blog](etc/demo2.jpg)
 
 ## Compatibility
 Python3 or Newer.<br>
