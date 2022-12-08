@@ -2,7 +2,7 @@ attrs==18.2.0
 Automat==0.7.0
 beautifulsoup4==4.6.3
 bs4==0.0.1
-certifi==2018.8.24
+certifi==2022.12.7
 chardet==3.0.4
 constantly==15.1.0
 cx-Freeze==5.1.1
